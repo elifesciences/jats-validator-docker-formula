@@ -4,6 +4,9 @@ metadata:
   name: {{ include "jats-validator.fullname" . }}
   annotations:
     external-dns.alpha.kubernetes.io/hostname: {{ include "jats-validator.fullname" . }}.elifesciences.org
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.clientCertificate }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
   labels:
     app.kubernetes.io/name: {{ include "jats-validator.name" . }}
     helm.sh/chart: {{ include "jats-validator.chart" . }}
@@ -16,6 +19,10 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: http
   selector:
     app.kubernetes.io/name: {{ include "jats-validator.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
